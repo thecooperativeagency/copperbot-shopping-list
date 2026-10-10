@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CopperBot: Shopping &amp; Build List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --copper: #b87333;
+    --copper-light: #d9955a;
+    --copper-pale: #f3e3d3;
+    --charcoal: #2b2b2e;
+    --charcoal-2: #36363a;
+    --charcoal-3: #444449;
+    --text: #ececec;
+    --muted: #a9a9ad;
+    --ok: #6fbf73;
+    --todo: #e0b04a;
+    --buy: #d9955a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--charcoal);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  header {
+    background: linear-gradient(135deg, var(--charcoal-2), var(--charcoal));
+    border-bottom: 3px solid var(--copper);
+    padding: 1.5rem 1rem;
+  }
+  header .wrap, main { max-width: 900px; margin: 0 auto; }
+  h1 { margin: 0; color: var(--copper-light); font-size: 1.7rem; }
+  .sub { color: var(--muted); margin: .3rem 0 0; font-size: .95rem; }
+  .updated { margin-top: .6rem; font-size: .85rem; color: var(--copper-pale); }
+  main { padding: 1rem; }
+  nav { display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0 1rem; }
+  nav a {
+    color: var(--copper-pale); text-decoration: none; font-size: .85rem;
+    border: 1px solid var(--charcoal-3); border-radius: 999px; padding: .25rem .7rem;
+  }
+  nav a:hover { border-color: var(--copper); }
+  section {
+    background: var(--charcoal-2);
+    border: 1px solid var(--charcoal-3);
+    border-left: 4px solid var(--copper);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 1.2rem;
+  }
+  h2 { margin: 0 0 .7rem; font-size: 1.2rem; color: var(--copper-light); }
+  h3 { margin: 1rem 0 .4rem; font-size: 1rem; color: var(--copper-pale); }
+  a { color: var(--copper-light); word-break: break-word; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+  th, td { text-align: left; padding: .5rem .55rem; border-bottom: 1px solid var(--charcoal-3); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+  tr:last-child td { border-bottom: none; }
+  .status { white-space: nowrap; font-weight: 600; font-size: .85rem; }
+  .status.ordered { color: var(--ok); }
+  .status.tobuy { color: var(--buy); }
+  .status.todo { color: var(--todo); }
+  .status.skip { color: var(--muted); }
+  .note {
+    background: rgba(184,115,51,.12);
+    border: 1px solid rgba(184,115,51,.35);
+    border-radius: 8px;
+    padding: .6rem .8rem;
+    margin-top: .8rem;
+    font-size: .9rem;
+  }
+  ul { margin: .3rem 0; padding-left: 1.2rem; }
+  ul.checks { list-style: none; padding-left: 0; }
+  ul.checks li { padding: .45rem 0; border-bottom: 1px solid var(--charcoal-3); }
+  ul.checks li:last-child { border-bottom: none; }
+  .legend { font-size: .85rem; color: var(--muted); }
+  footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 1rem 1rem 2rem; }
+  @media (max-width: 600px) {
+    h1 { font-size: 1.4rem; }
+    th, td { padding: .45rem .4rem; font-size: .86rem; }
+  }
+</style>
+</head>
+<body>
+<!--
+  HOW TO EDIT
+  - Status markers: ☑ Ordered (class "ordered"), ☐ To buy (class "tobuy"), ☐ To do (class "todo").
+    When something gets ordered/done, change the text to "☑ Ordered" / "☑ Done" and the class to "ordered".
+  - Update the "Last updated" line below whenever you change anything.
+  - Do NOT put passwords, tokens, or other credentials on this page.
+-->
+<header>
+  <div class="wrap">
+    <h1>CopperBot: Shopping &amp; Build List</h1>
+    <p class="sub">Slim 78 × 60 × 12.7 mm handheld voice-endpoint device with a 3D-printed enclosure.</p>
+    <p class="updated">Last updated: Oct 10, 2026</p>
+  </div>
+</header>
+
+<main>
+  <p class="legend">Status key: <span class="status ordered">☑ Ordered</span> · <span class="status tobuy">☐ To buy</span> · <span class="status todo">☐ To do</span></p>
+  <nav>
+    <a href="#printer">1. Printer</a>
+    <a href="#filament-ordered">2. Filament ordered</a>
+    <a href="#filament-to-buy">3. Filament to buy</a>
+    <a href="#drying">4. Drying &amp; storage</a>
+    <a href="#todos">5. To-dos</a>
+  </nav>
+
+  <!-- 1. PRINTER -->
+  <section id="printer">
+    <h2>1. Printer</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Status</th><th>Item</th><th>Details</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="status ordered">☑ Ordered</td>
+            <td>Bambu Lab A1 Combo (with AMS lite)</td>
+            <td>Ordered Oct 10, 2026 from the Bambu Lab US store during the Halloween sale.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 2. FILAMENT ALREADY ORDERED -->
+  <section id="filament-ordered">
+    <h2>2. Filament already ordered</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Status</th><th>Type</th><th>Color</th><th>Qty</th></tr></thead>
+        <tbody>
+          <tr><td class="status ordered">☑ Ordered</td><td>PLA Matte</td><td>Scarlet Red</td><td>1</td></tr>
+          <tr><td class="status ordered">☑ Ordered</td><td>PLA Matte</td><td>Marine Blue</td><td>1</td></tr>
+          <tr><td class="status ordered">☑ Ordered</td><td>PLA Matte</td><td>Ash Gray</td><td>1</td></tr>
+          <tr><td class="status ordered">☑ Ordered</td><td>PLA Matte</td><td>Charcoal</td><td>2</td></tr>
+          <tr><td class="status ordered">☑ Ordered</td><td>PLA</td><td>Pure Apricot</td><td>1</td></tr>
+          <tr><td class="status ordered">☑ Ordered</td><td>PETG Basic</td><td>Pine Green</td><td>1</td></tr>
+          <tr><td class="status ordered">☑ Ordered</td><td>PETG Basic</td><td>Dark Brown</td><td>1</td></tr>
+          <tr><td class="status ordered">☑ Ordered</td><td>PETG Basic</td><td>Black</td><td>1</td></tr>
+          <tr><td class="status ordered">☑ Ordered</td><td>PLA Basic</td><td>Sunflower Yellow</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Print plan</h3>
+    <ul>
+      <li><strong>Body:</strong> Charcoal PLA Matte</li>
+      <li><strong>Accents:</strong> Pure Apricot (for now)</li>
+      <li><strong>Test prints:</strong> Ash Gray</li>
+    </ul>
+    <div class="note"><strong>PETG note:</strong> PETG doesn't bond with PLA in the same print. Keep PETG for separate functional parts, and dry PETG before printing.</div>
+  </section>
+
+  <!-- 3. FILAMENT TO BUY -->
+  <section id="filament-to-buy">
+    <h2>3. Filament to buy</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Status</th><th>Item</th><th>Price</th><th>Why / notes</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="status tobuy">☐ To buy</td>
+            <td><a href="https://us.store.bambulab.com/products/pla-translucent">PLA Translucent</a> (frosted clear or white)</td>
+            <td>$18.99/roll MSRP</td>
+            <td>10 colors. Bonds with PLA. For the mic-mute LED window and screen bezel.</td>
+          </tr>
+          <tr>
+            <td class="status tobuy">☐ To buy</td>
+            <td>PLA Basic Bronze</td>
+            <td>n/a</td>
+            <td>Closer to copper than Apricot. In the <a href="https://us.store.bambulab.com/pages/promotions/filament-bulk-sale">bulk sale lineup</a>.</td>
+          </tr>
+          <tr>
+            <td class="status tobuy">☐ To buy</td>
+            <td>Plain white PLA</td>
+            <td>n/a</td>
+            <td>For labels and contrast.</td>
+          </tr>
+          <tr>
+            <td class="status skip">✕ Skip</td>
+            <td><a href="https://us.store.bambulab.com/products/petg-translucent">PETG Translucent</a></td>
+            <td>$15.99</td>
+            <td>Skip for CopperBot: clearer, but won't fuse with PLA.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">
+      <strong>Savings notes</strong>
+      <ul>
+        <li>Bulk sale is automatic: <strong>25% off 4–5 rolls</strong>, <strong>30% off 6–9</strong>, <strong>40% off 10+</strong>, counted per filament type in the same order.</li>
+        <li>No public discount codes beyond Bambu's $10 new-email-subscriber coupon ($100+ orders, valid 14 days, doesn't stack with other order-level discounts).</li>
+        <li>Halloween sale ends <strong>Oct 16, 2026, 8 AM CT</strong>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. DRYING AND STORAGE -->
+  <section id="drying">
+    <h2>4. Drying &amp; storage</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Status</th><th>Item</th><th>Price</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="status tobuy">☐ To buy</td>
+            <td><a href="https://us.store.bambulab.com/products/filament-protection-kit">Bambu Filament Protection Kit</a></td>
+            <td>$13.81</td>
+            <td>6 desiccant packs, 2 humidity gauges, foam seal strip.</td>
+          </tr>
+          <tr>
+            <td class="status tobuy">☐ To buy</td>
+            <td>Bambu desiccant refills: <a href="https://us.store.bambulab.com/products/silicone-desiccant">silicone</a> or <a href="https://us.store.bambulab.com/products/molecular-sieve-desiccant">molecular sieve</a></td>
+            <td>$3.99 (silicone) / $4.99 (molecular sieve) per 6-pack</td>
+            <td>Refills for the kit.</td>
+          </tr>
+          <tr>
+            <td class="status tobuy">☐ To buy</td>
+            <td><a href="https://www.amazon.com/dp/B0CD2QLVVS">OVV3D vacuum bag kit</a> (Amazon)</td>
+            <td>about $33</td>
+            <td>30 bags, pump, 30 reusable desiccant packs.</td>
+          </tr>
+          <tr>
+            <td class="status tobuy">☐ To buy</td>
+            <td>Gasketed weathertight tote</td>
+            <td>about $25–30</td>
+            <td>Bulk storage.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><strong>Note:</strong> These keep filament dry but won't dry a wet spool.</div>
+  </section>
+
+  <!-- 5. TO-DOS -->
+  <section id="todos">
+    <h2>5. To-dos</h2>
+    <ul class="checks">
+      <li><span class="status todo">☐ To do</span> Give Copper access to Railway (Lance to share access later; no credentials go on this page).</li>
+      <li><span class="status todo">☐ To do</span> Dry the PETG before first use.</li>
+      <li><span class="status todo">☐ To do</span> First enclosure test print in Ash Gray.</li>
+    </ul>
+  </section>
+</main>
+
+<footer>CopperBot build list · Lance Faucheux · No secrets or credentials on this page.</footer>
+</body>
+</html>
